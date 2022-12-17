@@ -1,17 +1,18 @@
-use std::ops::Index;
-
+use arboard::Clipboard;
 use eframe::{
     egui::{self, style::Margin},
     epaint::text::{LayoutJob, TextWrapping},
 };
 use egui::*;
+
 pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     let options = eframe::NativeOptions {
         always_on_top: true,
-        initial_window_size: Some(egui::vec2(200 as f32, 300 as f32)),
+        initial_window_size: Some(egui::vec2(100 as f32, 200 as f32)),
         transparent: true,
-        // decorated: false,
+        decorated: false,
+        initial_window_pos: Some(egui::Pos2 { x: -10.0, y: 10.0 }),
         ..Default::default()
     };
     eframe::run_native(
@@ -20,17 +21,16 @@ pub fn run() {
         Box::new(|_cc| Box::new(Content::default())),
     );
 }
-
 struct Content {
     count: i32,
-    show_box: bool,
+    show_decorated: bool,
 }
 
 impl Default for Content {
     fn default() -> Self {
         Self {
             count: 23,
-            show_box: true,
+            show_decorated: false,
         }
     }
 }
@@ -45,12 +45,15 @@ impl eframe::App for Content {
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
             ui.vertical_centered_justified(|ui| {
                 ui.horizontal(|ui| {
-                    ui.add(egui::Button::new("ECopy"));
+                    // ui.add(egui::Button::new("ECopy"));
                     if ui.button("📎").clicked() {
-                        self.show_box = !self.show_box;
-                        _frame.set_decorations(self.show_box);
+                        self.show_decorated = !self.show_decorated;
+                        _frame.set_decorations(self.show_decorated);
                     }
+                    ui.add(egui::Button::new(self.count.to_string()));
+                    ui.add(egui::Button::new("clear"));
                 });
+                ui.separator();
                 ui.separator();
             });
 
@@ -70,7 +73,7 @@ impl eframe::App for Content {
                         "What the fuck are you saying?E tis t sfsd",
                         "what wrong?",
                         "Do you want to a fight?",
-                        "Do you want to a fight?",
+                        "随便一句话？",
                         "Do you want to a fight?",
                         "Do you want to a fight?",
                         "Do you want to a fight?",
@@ -84,14 +87,16 @@ impl eframe::App for Content {
                             LayoutJob::single_section(words.to_string(), TextFormat::default());
                         job.wrap = wrap.clone();
 
-                        ui.button(job)
+                        let btn_res = ui
+                            .button(job)
                             .on_hover_cursor(egui::CursorIcon::PointingHand);
-                        // if btn_res.clicked() {
-                        //     self.count += 1;
-                        // }
+                        if btn_res.clicked() {
+                            let mut clipboard = Clipboard::new().unwrap();
+                            clipboard.set_text(words).unwrap();
+                            self.count += 1;
+                        }
                     });
                 });
-            ui.label(format!("hello, {}", self.count));
         });
     }
     fn clear_color(&self, _visuals: &egui::Visuals) -> egui::Rgba {
