@@ -3,9 +3,11 @@ use image::{ImageBuffer, Rgba};
 use rdev::{listen, Event, EventType, Key};
 mod font;
 mod gui;
+mod utils;
 use crate::gui::run;
 
 fn main() {
+    utils::init_e_copy_json();
     run();
     return;
     let mut is_meta = false;

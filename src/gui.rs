@@ -5,7 +5,7 @@ use eframe::{
 };
 use egui::*;
 
-use crate::font;
+use crate::{font, utils};
 
 pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
@@ -14,7 +14,6 @@ pub fn run() {
         initial_window_size: Some(egui::vec2(150 as f32, 200 as f32)),
         transparent: true,
         decorated: false,
-        initial_window_pos: Some(egui::Pos2 { x: -10.0, y: 10.0 }),
         ..Default::default()
     };
     eframe::run_native("ECopy", options, Box::new(|_cc| Box::new(Ecopy::new(_cc))));
@@ -23,16 +22,8 @@ struct Ecopy {
     count: i32,
     show_decorated: bool,
     clipboard: Clipboard,
+    json: utils::EcopyJson,
 }
-
-// impl Default for Ecopy {
-//     fn default() -> Self {
-//         Self {
-//             count: 23,
-//             show_decorated: false,
-//         }
-//     }
-// }
 
 impl Ecopy {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -41,6 +32,7 @@ impl Ecopy {
             count: 23,
             show_decorated: false,
             clipboard: Clipboard::new().unwrap(),
+            json: utils::get_e_copy_json(),
         }
     }
     fn set_clipboard_content(&mut self, str: &str) {
@@ -80,22 +72,23 @@ impl eframe::App for Ecopy {
             egui::ScrollArea::vertical()
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
-                    [
-                        "Do you have any plan?",
-                        "What is your name?",
-                        "It's my first i join this game~",
-                        "What the fuck are you saying?E tis t sfsd",
-                        "what wrong?",
-                        "Do you want to a fight?",
-                        "随便一句话？",
-                        "Do you want to a fight?",
-                        "Do you want to a fight?",
-                        "Do you want to a fight?",
-                        "Do you want to a fight?",
-                        "Do you want to a fight?",
-                    ]
-                    .into_iter()
-                    .for_each(|words| {
+                    // [
+                    //     "Do you have any plan?",
+                    //     "What is your name?",
+                    //     "It's my first i join this game~",
+                    //     "What the fuck are you saying?E tis t sfsd",
+                    //     "what wrong?",
+                    //     "Do you want to a fight?",
+                    //     "随便一句话？",
+                    //     "Do you want to a fight?",
+                    //     "Do you want to a fight?",
+                    //     "Do you want to a fight?",
+                    //     "Do you want to a fight?",
+                    //     "Do you want to a fight?",
+                    // ]
+                    // .into_iter()
+                    self.json.clone().data.into_iter().for_each(|item| {
+                        let words = &item.content;
                         // ui.separator();
                         let mut job =
                             LayoutJob::single_section(words.to_string(), TextFormat::default());
