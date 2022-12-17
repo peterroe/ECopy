@@ -1,9 +1,11 @@
-
 use std::ops::Index;
 
-use eframe::{egui::{self, style::Margin}, epaint::text::{LayoutJob, TextWrapping}};
+use eframe::{
+    egui::{self, style::Margin},
+    epaint::text::{LayoutJob, TextWrapping},
+};
 use egui::*;
-pub fn run()  {
+pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     let options = eframe::NativeOptions {
         always_on_top: true,
@@ -21,14 +23,14 @@ pub fn run()  {
 
 struct Content {
     count: i32,
-    show_box: bool
+    show_box: bool,
 }
 
 impl Default for Content {
     fn default() -> Self {
         Self {
             count: 23,
-            show_box: true
+            show_box: true,
         }
     }
 }
@@ -37,9 +39,10 @@ impl eframe::App for Content {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // _frame.set_decorations(false)
         let fill = egui::Color32::from_rgba_premultiplied(0, 0, 0, 0);
-        let frame = egui::Frame::none().fill(fill).inner_margin(Margin::same(5.0));
+        let frame = egui::Frame::none()
+            .fill(fill)
+            .inner_margin(Margin::same(5.0));
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
-            
             ui.vertical_centered_justified(|ui| {
                 ui.horizontal(|ui| {
                     ui.add(egui::Button::new("ECopy"));
@@ -72,20 +75,24 @@ impl eframe::App for Content {
                         "Do you want to a fight?",
                         "Do you want to a fight?",
                         "Do you want to a fight?",
-                        "Do you want to a fight?"
-                    ].into_iter().for_each(|words| {
+                        "Do you want to a fight?",
+                    ]
+                    .into_iter()
+                    .for_each(|words| {
                         // ui.separator();
-                        let mut job = LayoutJob::single_section(words.to_string(), TextFormat::default());
+                        let mut job =
+                            LayoutJob::single_section(words.to_string(), TextFormat::default());
                         job.wrap = wrap.clone();
 
-                        ui.button(job).on_hover_cursor(egui::CursorIcon::PointingHand);
+                        ui.button(job)
+                            .on_hover_cursor(egui::CursorIcon::PointingHand);
                         // if btn_res.clicked() {
                         //     self.count += 1;
                         // }
                     });
                 });
-                ui.label(format!("hello, {}", self.count));
-            });
+            ui.label(format!("hello, {}", self.count));
+        });
     }
     fn clear_color(&self, _visuals: &egui::Visuals) -> egui::Rgba {
         egui::Rgba::TRANSPARENT

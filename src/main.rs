@@ -2,13 +2,11 @@ use arboard::Clipboard;
 use image::{ImageBuffer, Rgba};
 use rdev::{listen, Event, EventType, Key};
 mod gui;
-use crate::{
-    gui::run,
-};
+use crate::gui::run;
 
 fn main() {
     run();
-    return ;
+    return;
     let mut is_meta = false;
     let mut clipboard = Clipboard::new().unwrap();
     let mut parse_clipboard = move || match clipboard.get_image() {
