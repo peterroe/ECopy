@@ -1,6 +1,7 @@
 use arboard::Clipboard;
 use image::{ImageBuffer, Rgba};
 use rdev::{listen, Event, EventType, Key};
+mod font;
 mod gui;
 use crate::gui::run;
 
