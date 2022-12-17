@@ -43,6 +43,17 @@ impl EcopyJson {
             }],
         })
     }
+    pub fn clear(ctx: &mut EcopyJson) {
+        ctx.data = vec![];
+        let serialized = serde_json::to_string::<Value>(&{
+            json!({
+                "name": "Ecopy2",
+                "data": [{}]
+            })
+        })
+        .unwrap();
+        std::fs::write(PATH, serialized).unwrap();
+    }
 }
 
 static PATH: &str = "/Users/lsh/Desktop/t/packages/rust100/clipboard/src/fuck.json";

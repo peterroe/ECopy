@@ -58,7 +58,9 @@ impl eframe::App for Ecopy {
                         _frame.set_decorations(self.show_decorated);
                     }
                     ui.separator();
-                    ui.add(egui::Button::new("clear"));
+                    if ui.button("clear").clicked() {
+                        utils::EcopyJson::clear(&mut self.json);
+                    }
                 });
                 ui.separator();
             });
