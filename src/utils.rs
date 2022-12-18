@@ -1,9 +1,12 @@
 #[macro_use]
-use std::{path::Path};
+use lazy_static::lazy_static;
+
+use arboard::Clipboard;
 use serde_derive::{Deserialize, Serialize};
 use serde_json::{self, json, Value};
+use std::path::Path;
+use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EcopyJson {
     pub name: String,
@@ -48,7 +51,7 @@ impl EcopyJson {
         let serialized = serde_json::to_string::<Value>(&{
             json!({
                 "name": "Ecopy2",
-                "data": [{}]
+                "data": []
             })
         })
         .unwrap();
@@ -73,4 +76,13 @@ pub fn get_e_copy_json() -> EcopyJson {
     println!("hello: {:?}", c.data);
     c.data.sort_by(|a, b| b.time.cmp(&a.time));
     return c;
+}
+
+lazy_static! {
+    // pub static ref CLIPBOARD: Mutex<Clipboard> = Mutex::new();
+}
+pub fn set_clip_board(str: &str) {
+    if let Err(err) = Clipboard::new().unwrap().set_text(str) {
+        panic!("Fail: parse text to clipboard {}", err);
+    }
 }

@@ -274,6 +274,7 @@ dependencies = [
  "arboard",
  "eframe",
  "image",
+ "lazy_static",
  "rdev",
  "serde",
  "serde_derive",

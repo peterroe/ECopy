@@ -1,11 +1,19 @@
-use arboard::Clipboard;
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+};
+
+// use arboard::Clipboard;
 use eframe::{
     egui::{self, style::Margin},
     epaint::text::{LayoutJob, TextWrapping},
 };
 use egui::*;
 
-use crate::{font, utils};
+use crate::{
+    font, hotkey,
+    utils::{self, CopyItem, EcopyJson},
+};
 
 pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
@@ -16,30 +24,42 @@ pub fn run() {
         decorated: false,
         ..Default::default()
     };
-    eframe::run_native("ECopy", options, Box::new(|_cc| Box::new(Ecopy::new(_cc))));
+    eframe::run_native("ECopy", options, Box::new(set_task));
+}
+
+fn set_task(_cc: &eframe::CreationContext) -> Box<dyn eframe::App> {
+    let state = Arc::new(Mutex::new(utils::get_e_copy_json()));
+    {
+        let s = state.clone();
+        thread::spawn(move || {
+            hotkey::listen_copy(s);
+        });
+    }
+    Box::new(Ecopy::new(_cc, state.clone()))
 }
 struct Ecopy {
     count: i32,
     show_decorated: bool,
-    clipboard: Clipboard,
-    json: utils::EcopyJson,
+    // clipboard: Clipboard,
+    json: Arc<Mutex<EcopyJson>>,
 }
 
 impl Ecopy {
-    fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+    fn new(_cc: &eframe::CreationContext<'_>, state: Arc<Mutex<EcopyJson>>) -> Self {
         font::install_fonts(&_cc.egui_ctx);
+
         Self {
             count: 23,
             show_decorated: false,
-            clipboard: Clipboard::new().unwrap(),
-            json: utils::get_e_copy_json(),
+            // clipboard: Clipboard::new().unwrap(),
+            json: state,
         }
     }
-    fn set_clipboard_content(&mut self, str: &str) {
-        if let Err(err) = self.clipboard.set_text(str) {
-            panic!("Fail: parse text to clipboard {}", err);
-        }
-    }
+    // fn set_clipboard_content(&mut self, str: &str) {
+    //     if let Err(err) = self.clipboard.set_text(str) {
+    //         panic!("Fail: parse text to clipboard {}", err);
+    //     }
+    // }
 }
 
 impl eframe::App for Ecopy {
@@ -52,14 +72,14 @@ impl eframe::App for Ecopy {
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
             ui.vertical_centered(|ui| {
                 ui.horizontal(|ui| {
-                    // ui.add(egui::Button::new("ECopy"));
+                    ui.add(egui::Button::new(self.count.to_string()));
                     if ui.button("📎").clicked() {
                         self.show_decorated = !self.show_decorated;
                         _frame.set_decorations(self.show_decorated);
                     }
                     ui.separator();
                     if ui.button("clear").clicked() {
-                        utils::EcopyJson::clear(&mut self.json);
+                        utils::EcopyJson::clear(&mut self.json.lock().unwrap());
                     }
                 });
                 ui.separator();
@@ -74,22 +94,16 @@ impl eframe::App for Ecopy {
             egui::ScrollArea::vertical()
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
-                    // [
-                    //     "Do you have any plan?",
-                    //     "What is your name?",
-                    //     "It's my first i join this game~",
-                    //     "What the fuck are you saying?E tis t sfsd",
-                    //     "what wrong?",
-                    //     "Do you want to a fight?",
-                    //     "随便一句话？",
-                    //     "Do you want to a fight?",
-                    //     "Do you want to a fight?",
-                    //     "Do you want to a fight?",
-                    //     "Do you want to a fight?",
-                    //     "Do you want to a fight?",
-                    // ]
-                    // .into_iter()
-                    self.json.clone().data.into_iter().for_each(|item| {
+                    let data = self.json.lock().unwrap();
+
+                    // println!("{:?}", data.clone().data);
+                    // self.json
+                    //     .lock()
+                    //     .unwrap()
+                    //     .clone()
+                    //     .data
+                    let mut o = data.clone();
+                    o.data.iter_mut().for_each(|item| {
                         let words = &item.content;
                         // ui.separator();
                         let mut job =
@@ -100,8 +114,10 @@ impl eframe::App for Ecopy {
                             .button(job)
                             .on_hover_cursor(egui::CursorIcon::PointingHand);
                         if btn_res.clicked() {
-                            self.set_clipboard_content(words);
+                            // self.clipboard
+                            // self.set_clipboard_content(words);
                             self.count += 1;
+                            utils::set_clip_board(words);
                         }
                     });
                 });
