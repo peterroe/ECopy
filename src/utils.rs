@@ -78,6 +78,11 @@ pub fn get_e_copy_json() -> EcopyJson {
     return c;
 }
 
+pub fn set_e_copy_json(data: EcopyJson) {
+    let o = serde_json::to_string::<EcopyJson>(&data).unwrap();
+    std::fs::write(PATH, o).unwrap();
+}
+
 lazy_static! {
     // pub static ref CLIPBOARD: Mutex<Clipboard> = Mutex::new();
 }

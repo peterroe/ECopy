@@ -41,6 +41,7 @@ struct Ecopy {
     count: i32,
     show_decorated: bool,
     // clipboard: Clipboard,
+    show_scroll: bool,
     json: Arc<Mutex<EcopyJson>>,
 }
 
@@ -51,6 +52,7 @@ impl Ecopy {
         Self {
             count: 23,
             show_decorated: false,
+            show_scroll: true,
             // clipboard: Clipboard::new().unwrap(),
             json: state,
         }
@@ -72,13 +74,16 @@ impl eframe::App for Ecopy {
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
             ui.vertical_centered(|ui| {
                 ui.horizontal(|ui| {
-                    ui.add(egui::Button::new(self.count.to_string()));
+                    if ui.button("❌").clicked() {
+                        _frame.close();
+                    }
+                    // ui.separator();
                     if ui.button("📎").clicked() {
                         self.show_decorated = !self.show_decorated;
                         _frame.set_decorations(self.show_decorated);
                     }
-                    ui.separator();
-                    if ui.button("clear").clicked() {
+                    // ui.separator();
+                    if ui.button("🗑").clicked() {
                         utils::EcopyJson::clear(&mut self.json.lock().unwrap());
                     }
                 });
@@ -91,17 +96,12 @@ impl eframe::App for Ecopy {
                 overflow_character: Some('…'),
                 ..Default::default()
             };
+            // if self.show_scroll {
             egui::ScrollArea::vertical()
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
                     let data = self.json.lock().unwrap();
 
-                    // println!("{:?}", data.clone().data);
-                    // self.json
-                    //     .lock()
-                    //     .unwrap()
-                    //     .clone()
-                    //     .data
                     let mut o = data.clone();
                     o.data.iter_mut().for_each(|item| {
                         let words = &item.content;
@@ -121,9 +121,17 @@ impl eframe::App for Ecopy {
                         }
                     });
                 });
+            // }
+            // ui.with_layout(egui::Layout::bottom_up(egui::Align::BOTTOM), |ui| {
+            //     ui.separator();
+            // });
         });
     }
     fn clear_color(&self, _visuals: &egui::Visuals) -> egui::Rgba {
         egui::Rgba::TRANSPARENT
+    }
+    fn on_close_event(&mut self) -> bool {
+        utils::set_e_copy_json(self.json.lock().unwrap().clone());
+        true
     }
 }
