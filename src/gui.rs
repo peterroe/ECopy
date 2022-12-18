@@ -19,9 +19,9 @@ pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     let options = eframe::NativeOptions {
         always_on_top: true,
-        initial_window_size: Some(egui::vec2(150 as f32, 200 as f32)),
+        initial_window_size: Some(egui::vec2(116 as f32, 200 as f32)),
         transparent: true,
-        decorated: false,
+        decorated: true,
         ..Default::default()
     };
     eframe::run_native("ECopy", options, Box::new(set_task));
@@ -51,7 +51,7 @@ impl Ecopy {
 
         Self {
             count: 23,
-            show_decorated: false,
+            show_decorated: true,
             show_scroll: true,
             // clipboard: Clipboard::new().unwrap(),
             json: state,
@@ -72,11 +72,17 @@ impl eframe::App for Ecopy {
             .fill(fill)
             .inner_margin(Margin::same(5.0));
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
-            ui.vertical_centered(|ui| {
+            ui.vertical_centered_justified(|ui| {
                 ui.horizontal(|ui| {
                     if ui.button("❌").clicked() {
                         _frame.close();
                     }
+                    //
+                    // let f = self.show_scroll ? "\u{2B07}" : "\u{2B07}";
+                    if ui.button("⬇").clicked() {
+                        self.show_scroll = !self.show_scroll;
+                    }
+                    // self.show_scroll = false;
                     // ui.separator();
                     if ui.button("📎").clicked() {
                         self.show_decorated = !self.show_decorated;
@@ -96,32 +102,34 @@ impl eframe::App for Ecopy {
                 overflow_character: Some('…'),
                 ..Default::default()
             };
-            // if self.show_scroll {
-            egui::ScrollArea::vertical()
-                .auto_shrink([false; 2])
-                .show(ui, |ui| {
-                    let data = self.json.lock().unwrap();
+            if self.show_scroll {
+                egui::ScrollArea::vertical()
+                    .auto_shrink([false; 2])
+                    .show(ui, |ui| {
+                        let data = self.json.lock().unwrap();
 
-                    let mut o = data.clone();
-                    o.data.iter_mut().for_each(|item| {
-                        let words = &item.content;
-                        // ui.separator();
-                        let mut job =
-                            LayoutJob::single_section(words.to_string(), TextFormat::default());
-                        job.wrap = wrap.clone();
+                        let mut o = data.clone();
+                        o.data.iter_mut().for_each(|item| {
+                            let words = &item.content;
+                            // ui.separator();
+                            let mut job = LayoutJob::single_section(
+                                words.trim().to_string(),
+                                TextFormat::default(),
+                            );
+                            job.wrap = wrap.clone();
 
-                        let btn_res = ui
-                            .button(job)
-                            .on_hover_cursor(egui::CursorIcon::PointingHand);
-                        if btn_res.clicked() {
-                            // self.clipboard
-                            // self.set_clipboard_content(words);
-                            self.count += 1;
-                            utils::set_clip_board(words);
-                        }
+                            let btn_res = ui
+                                .button(job)
+                                .on_hover_cursor(egui::CursorIcon::PointingHand);
+                            if btn_res.clicked() {
+                                // self.clipboard
+                                // self.set_clipboard_content(words);
+                                self.count += 1;
+                                utils::set_clip_board(words);
+                            }
+                        });
                     });
-                });
-            // }
+            }
             // ui.with_layout(egui::Layout::bottom_up(egui::Align::BOTTOM), |ui| {
             //     ui.separator();
             // });
