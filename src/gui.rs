@@ -113,7 +113,7 @@ impl eframe::App for Ecopy {
                             let words = &item.content;
                             // ui.separator();
                             let mut job = LayoutJob::single_section(
-                                words.trim().to_string(),
+                                words.trim().replace("\n", "").to_string(),
                                 TextFormat::default(),
                             );
                             job.wrap = wrap.clone();
