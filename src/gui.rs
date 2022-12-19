@@ -1,6 +1,7 @@
 use std::{
     sync::{Arc, Mutex},
     thread,
+    time::Duration,
 };
 
 // use arboard::Clipboard;
@@ -35,6 +36,43 @@ fn set_task(_cc: &eframe::CreationContext) -> Box<dyn eframe::App> {
             hotkey::listen_copy(s);
         });
     }
+
+    {
+        let s = state.clone();
+        thread::spawn(move || {
+            loop {
+                // 等待 1 分钟
+                thread::sleep(Duration::from_secs(60));
+                utils::set_e_copy_json(s.lock().unwrap().clone());
+            }
+        });
+    }
+
+    // {
+    //     thread::spawn(move || {
+    //         if let Err(err) = rdev::listen(move |event| {
+    //             match event.event_type {
+    // rdev::EventType::ButtonPress(button) => {
+    //     if button == rdev::Button::Left {
+    //         mouse_state.lock().unwrap().down();
+    //     }
+    // }
+    // rdev::EventType::ButtonRelease(button) => {
+    //     if button == rdev::Button::Left {
+    //         mouse_state.lock().unwrap().release()
+    //     }
+    // }
+    //                 rdev::EventType::MouseMove { x, y } => {
+    //                     print!("x,y: {}, {}", x, y);
+    //                     // mouse_state.lock().unwrap().moving()
+    //                 }
+    //                 _ => {}
+    //             };
+    //         }) {
+    //             print!("error");
+    //         }
+    //     });
+    // }
     Box::new(Ecopy::new(_cc, state.clone()))
 }
 struct Ecopy {
@@ -84,6 +122,14 @@ impl eframe::App for Ecopy {
                     }
                     // self.show_scroll = false;
                     // ui.separator();
+                    // let res = ui.add(egui::Button::new("move").sense(Sense::click_and_drag()));
+                    // if res.dragged() {
+                    //     let egui::Pos2 { x, y } = ctx.pointer_hover_pos().unwrap();
+                    //     print!("drag, {}, {}", x, y);
+                    //     if (x != 0.0 && y != 0.0) {
+                    //         _frame.set_window_pos(egui::Pos2::new(x, y));
+                    //     }
+                    // }
                     if ui.button("📎").clicked() {
                         self.show_decorated = !self.show_decorated;
                         _frame.set_decorations(self.show_decorated);
@@ -97,7 +143,7 @@ impl eframe::App for Ecopy {
             });
 
             let wrap = TextWrapping {
-                max_rows: 1,
+                max_rows: 2,
                 break_anywhere: true,
                 overflow_character: Some('…'),
                 ..Default::default()
