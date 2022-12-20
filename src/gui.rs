@@ -122,8 +122,14 @@ impl eframe::App for Ecopy {
                     }
                     //
                     // let f = self.show_scroll ? "\u{2B07}" : "\u{2B07}";
-                    if ui.button("⬇").clicked() {
-                        self.show_scroll = !self.show_scroll;
+                    if self.show_scroll {
+                        if ui.button("🔺").clicked() {
+                            self.show_scroll = !self.show_scroll;
+                        }
+                    } else {
+                        if ui.button("🔻").clicked() {
+                            self.show_scroll = !self.show_scroll;
+                        }
                     }
                     // let res = ui.add(egui::Button::new("move").sense(Sense::click_and_drag()));
                     // self.show_scroll = false;
