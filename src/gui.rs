@@ -18,9 +18,11 @@ use crate::{
 
 pub fn run() {
     // Log to stdout (if you run with `RUST_LOG=debug`).
+    let [x, y] = utils::get_e_copy_json().pos;
     let options = eframe::NativeOptions {
         always_on_top: true,
         initial_window_size: Some(egui::vec2(116 as f32, 200 as f32)),
+        // initial_window_pos: Some(egui::pos2(x, y)),
         transparent: true,
         decorated: true,
         ..Default::default()
@@ -42,7 +44,7 @@ fn set_task(_cc: &eframe::CreationContext) -> Box<dyn eframe::App> {
         thread::spawn(move || {
             loop {
                 // 等待 1 分钟
-                thread::sleep(Duration::from_secs(60));
+                thread::sleep(Duration::from_secs(10));
                 utils::set_e_copy_json(s.lock().unwrap().clone());
             }
         });
@@ -84,7 +86,10 @@ struct Ecopy {
 }
 
 impl Ecopy {
-    fn new(_cc: &eframe::CreationContext<'_>, state: Arc<Mutex<EcopyJson>>) -> Self {
+    fn new(
+        _cc: &eframe::CreationContext<'_>,
+        state: Arc<Mutex<EcopyJson>>,
+    ) -> Self {
         font::install_fonts(&_cc.egui_ctx);
 
         Self {
@@ -120,17 +125,27 @@ impl eframe::App for Ecopy {
                     if ui.button("⬇").clicked() {
                         self.show_scroll = !self.show_scroll;
                     }
+                    // let res = ui.add(egui::Button::new("move").sense(Sense::click_and_drag()));
                     // self.show_scroll = false;
                     // ui.separator();
-                    // let res = ui.add(egui::Button::new("move").sense(Sense::click_and_drag()));
+                    // {}
                     // if res.dragged() {
-                    //     let egui::Pos2 { x, y } = ctx.pointer_hover_pos().unwrap();
-                    //     print!("drag, {}, {}", x, y);
-                    //     if (x != 0.0 && y != 0.0) {
-                    //         _frame.set_window_pos(egui::Pos2::new(x, y));
+                    //     let egui::Pos2 { x, y } = self.share_pos.lock().unwrap().clone();
+                    //     if let Some(egui::Pos2 { x: x1, y: y1 }) = ctx.pointer_hover_pos() {
+                    //         if x != 0.0 && y != 0.0 {
+                    //             _frame.set_window_pos(egui::Pos2 {
+                    //                 x: x * 2.0 - 10.0+ x1 * 4.0,
+                    //                 y: y * 2.0 - 120.0 + y1 * 4.0,
+                    //             });
+                    //         }
                     //     }
+                        // print!("drag, {}, {}", x, y);
+                        //     if (x != 0.0 && y != 0.0) {
+                        //     }
                     // }
                     if ui.button("📎").clicked() {
+                        // self.json.lock().unwrap().clone().pos = 
+                        // _frame.set_always_on_top(self.show_decorated);
                         self.show_decorated = !self.show_decorated;
                         _frame.set_decorations(self.show_decorated);
                     }

@@ -10,10 +10,12 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
+use eframe::egui;
 // use users::os::unix::UserExt;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EcopyJson {
     pub name: String,
+    pub pos: [f32; 2],
     pub data: Vec<CopyItem>,
 }
 
@@ -32,6 +34,7 @@ impl EcopyJson {
             .as_millis() as u64;
         json!({
             "name": "Ecopy2",
+            "pos": [300.0, 300.0],
             "data": [{
                 "content": "复制的字符串内容",
                 "time": ms + 1000
@@ -52,9 +55,11 @@ impl EcopyJson {
     }
     pub fn clear(ctx: &mut EcopyJson) {
         ctx.data = vec![];
+        let [x, y] = ctx.pos;
         let serialized = serde_json::to_string::<Value>(&{
             json!({
                 "name": "Ecopy2",
+                "egio": [x, y],
                 "data": []
             })
         })
