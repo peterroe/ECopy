@@ -123,10 +123,15 @@ impl eframe::App for Ecopy {
                     // let f = self.show_scroll ? "\u{2B07}" : "\u{2B07}";
                     if self.show_scroll {
                         if ui.button("🔺").clicked() {
+                            let egui::Vec2 { x, y } = _frame.info().window_info.size;
+                            _frame.set_window_size(egui::vec2(x, 30.0));
+                            self.last_size = [x, y];
                             self.show_scroll = false;
                         }
                     } else {
                         if ui.button("🔻").clicked() {
+                            let [x, y] = self.last_size;
+                            _frame.set_window_size(egui::vec2(x, y));
                             self.show_scroll = true;
                         }
                     }
