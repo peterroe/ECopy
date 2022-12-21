@@ -124,11 +124,11 @@ impl eframe::App for Ecopy {
                     // let f = self.show_scroll ? "\u{2B07}" : "\u{2B07}";
                     if self.show_scroll {
                         if ui.button("🔺").clicked() {
-                            self.show_scroll = !self.show_scroll;
+                            self.show_scroll = false;
                         }
                     } else {
                         if ui.button("🔻").clicked() {
-                            self.show_scroll = !self.show_scroll;
+                            self.show_scroll = true;
                         }
                     }
                     // let res = ui.add(egui::Button::new("move").sense(Sense::click_and_drag()));
@@ -184,7 +184,6 @@ impl eframe::App for Ecopy {
                                 TextFormat::default(),
                             );
                             job.wrap = wrap.clone();
-
                             let btn_res = ui
                                 .button(job)
                                 .on_hover_cursor(egui::CursorIcon::PointingHand);
