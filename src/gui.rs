@@ -22,9 +22,9 @@ pub fn run() {
     let options = eframe::NativeOptions {
         always_on_top: true,
         initial_window_size: Some(egui::vec2(116 as f32, 200 as f32)),
-        // initial_window_pos: Some(egui::pos2(x, y)),
+        initial_window_pos: Some(egui::pos2(x * 2.0, y * 2.0)),
         transparent: true,
-        decorated: true,
+        decorated: false,
         ..Default::default()
     };
     eframe::run_native("ECopy", options, Box::new(set_task));
@@ -43,8 +43,8 @@ fn set_task(_cc: &eframe::CreationContext) -> Box<dyn eframe::App> {
         let s = state.clone();
         thread::spawn(move || {
             loop {
-                // 等待 1 分钟
-                thread::sleep(Duration::from_secs(10));
+                // 等待 5s
+                thread::sleep(Duration::from_secs(5));
                 utils::set_e_copy_json(s.lock().unwrap().clone());
             }
         });
@@ -83,21 +83,20 @@ struct Ecopy {
     // clipboard: Clipboard,
     show_scroll: bool,
     json: Arc<Mutex<EcopyJson>>,
+    last_size: [f32; 2],
 }
 
 impl Ecopy {
-    fn new(
-        _cc: &eframe::CreationContext<'_>,
-        state: Arc<Mutex<EcopyJson>>,
-    ) -> Self {
+    fn new(_cc: &eframe::CreationContext<'_>, state: Arc<Mutex<EcopyJson>>) -> Self {
         font::install_fonts(&_cc.egui_ctx);
 
         Self {
             count: 23,
-            show_decorated: true,
+            show_decorated: false,
             show_scroll: true,
             // clipboard: Clipboard::new().unwrap(),
             json: state,
+            last_size: [116.0, 200.0],
         }
     }
     // fn set_clipboard_content(&mut self, str: &str) {
@@ -145,15 +144,22 @@ impl eframe::App for Ecopy {
                     //             });
                     //         }
                     //     }
-                        // print!("drag, {}, {}", x, y);
-                        //     if (x != 0.0 && y != 0.0) {
-                        //     }
+                    // print!("drag, {}, {}", x, y);
+                    //     if (x != 0.0 && y != 0.0) {
+                    //     }
                     // }
                     if ui.button("📎").clicked() {
-                        // self.json.lock().unwrap().clone().pos = 
+                        ui.input().pixels_per_point();
+                        // self.json.lock().unwrap().clone().pos =
                         // _frame.set_always_on_top(self.show_decorated);
                         self.show_decorated = !self.show_decorated;
+
                         _frame.set_decorations(self.show_decorated);
+                        // if !self.show_decorated {
+                        let egui::Pos2 { x, y } = _frame.info().window_info.position.unwrap();
+                        self.json.lock().unwrap().pos = [x, y];
+                        utils::set_e_copy_json(self.json.lock().unwrap().clone());
+                        // }
                     }
                     // ui.separator();
                     if ui.button("🗑").clicked() {
@@ -205,7 +211,8 @@ impl eframe::App for Ecopy {
         egui::Rgba::TRANSPARENT
     }
     fn on_close_event(&mut self) -> bool {
-        utils::set_e_copy_json(self.json.lock().unwrap().clone());
+        // pity
+        // utils::set_e_copy_json(self.json.lock().unwrap().clone());
         true
     }
 }
