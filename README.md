@@ -1,3 +1,3 @@
 ## ECopy
 
-A software make you copy content easily :)
+![img](./snapshot.png)
