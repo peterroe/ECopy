@@ -112,6 +112,7 @@ impl eframe::App for Ecopy {
         let fill = egui::Color32::from_rgba_premultiplied(0, 0, 0, 0);
         let frame = egui::Frame::none()
             .fill(fill)
+            .shadow(epaint::Shadow::NONE)
             .inner_margin(Margin::same(5.0));
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
             ui.vertical_centered_justified(|ui| {

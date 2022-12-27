@@ -1,4 +1,4 @@
-use eframe::egui::{self, FontDefinitions, FontFamily, TextStyle};
+use eframe::{egui::{self, FontDefinitions, FontFamily, TextStyle}, epaint::{Shadow, Stroke, Color32}};
 use egui::{FontData, FontId};
 use FontFamily::{Monospace, Proportional};
 
@@ -21,7 +21,7 @@ pub fn install_fonts(egui_ctx: &egui::Context) {
 
     egui_ctx.set_fonts(fonts);
 
-    // let mut style = (*egui_ctx.style()).clone();
+    let mut style = (*egui_ctx.style()).clone();
     // style.text_styles = [
     //     (TextStyle::Heading, FontId::new(20.0, Proportional)),
     //     (TextStyle::Body, FontId::new(20.0, Proportional)),
@@ -30,6 +30,9 @@ pub fn install_fonts(egui_ctx: &egui::Context) {
     //     (TextStyle::Small, FontId::new(18.0, Proportional)),
     // ]
     // .into();
-
+    // style.visuals.widgets.active.bg_stroke = Stroke::NONE;
+    // style.visuals.widgets.hovered.bg_stroke = Stroke::NONE;
+    // style.visuals.widgets.inactive.bg_fill = Color32::TRANSPARENT;
+    // style.visuals.widgets.inactive.bg_stroke = Stroke::NONE;
     // egui_ctx.set_style(style);
 }
