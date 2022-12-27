@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx index.ts",
+    "build": "packapp --icon icon.icns ./target/debug/ecopy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

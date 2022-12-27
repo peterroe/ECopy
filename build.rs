@@ -1,4 +1,5 @@
 use std::env;
+use winres;
 
 fn main() {
     if env::var("PROFILE").unwrap() == "release" && env::var("CARGO_CFG_WINDOWS").is_ok() {
@@ -9,7 +10,7 @@ fn main() {
                     .set_windres_path("x86_64-w64-mingw32-windres");
             }
         }
-        res.set_icon("res/i.ico").set_language(0x04);
+        res.set_icon("res/icon.ico").set_language(0x04);
         res.compile().unwrap();
     }
 }

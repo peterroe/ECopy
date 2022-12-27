@@ -268,21 +268,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "clipboard"
-version = "0.1.0"
-dependencies = [
- "arboard",
- "eframe",
- "home",
- "image",
- "lazy_static",
- "rdev",
- "serde",
- "serde_derive",
- "serde_json",
-]
-
-[[package]]
 name = "clipboard-win"
 version = "4.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -655,6 +640,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b601108bca3af7650440ace4ca55b2daf52c36f2635be3587d77b16efd8d0691"
 dependencies = [
  "bytemuck",
+]
+
+[[package]]
+name = "ecopy"
+version = "0.1.0"
+dependencies = [
+ "arboard",
+ "eframe",
+ "home",
+ "image",
+ "lazy_static",
+ "rdev",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "winres",
 ]
 
 [[package]]
@@ -2435,6 +2436,15 @@ dependencies = [
  "web-sys",
  "windows-sys 0.36.1",
  "x11-dl",
+]
+
+[[package]]
+name = "winres"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b68db261ef59e9e52806f688020631e987592bd83619edccda9c47d42cde4f6c"
+dependencies = [
+ "toml",
 ]
 
 [[package]]
