@@ -33,7 +33,7 @@ impl EcopyJson {
             .expect("Time went backwards")
             .as_millis() as u64;
         json!({
-            "name": "Ecopy2",
+            "name": "Ecopy",
             "pos": [300.0, 300.0],
             "data": [{
                 "content": "复制的字符串内容",
