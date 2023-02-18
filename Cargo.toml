@@ -2,9 +2,27 @@
 name = "ecopy"
 version = "0.1.0"
 edition = "2021"
+description="APp"
 build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.bundle]
+name = "Ecopy"
+identifier = "icu.peterroe.Ecopy"
+icon = ["res/icon.png", "res/icon.ico"]
+version = "1.0.0"
+resources = ["assets", "res/*.png","res/*.ico"]
+copyright = "Copyright (c) Peter Roe 2023. All rights reserved."
+category = "Developer Tool"
+short_description = "An example application."
+long_description = """
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut
+enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat.
+"""
+deb_depends = ["libgl1-mesa-glx", "libsdl2-2.0-0 (>= 2.0.5)"]
+osx_frameworks = ["SDL2"]
 
 [dependencies]
 arboard = "3.2.0"
